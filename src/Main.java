@@ -9,10 +9,18 @@ public class Main {
         bst.add(31);
         bst.add(21);
 
-        bst.preOrder();
-
-        System.out.println();
         System.out.println(bst);
+
+        System.out.println("=== 前序遍历 ===");
+        bst.preOrder();
+        System.out.println("=== 前序遍历（非递归） ===");
+        bst.preOrderWithoutRecursion();
+
+        System.out.println("=== 中序遍历 ===");
+        bst.inOrder();
+
+        System.out.println("=== 后序遍历 ===");
+        bst.postOrder();
 
 //        String a = new String("I love Pan.");
 //        String b = a;
