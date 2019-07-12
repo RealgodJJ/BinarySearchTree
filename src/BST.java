@@ -61,4 +61,58 @@ public class BST<T extends Comparable<T>> {
 
         return root;
     }
+
+    public boolean contains(T e) {
+        return contains(root, e);
+    }
+
+    private boolean contains(Node node, T e) {
+        if (node == null)
+            return false;
+
+        if (node.e.compareTo(e) == 0)
+            return true;
+        else if (node.e.compareTo(e) < 0)
+            return contains(node.left, e);
+        else
+            return contains(node.right, e);
+    }
+
+    public void preOrder() {
+        preOrder(root);
+    }
+
+    private void preOrder(Node node) {
+        if (node == null)
+            return;
+
+        System.out.println(node.e);
+        preOrder(node.left);
+        preOrder(node.right);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        generateBSTString(root, 0, stringBuilder);
+        return stringBuilder.toString();
+    }
+
+    private void generateBSTString(Node node, int depth, StringBuilder result) {
+        if (node == null) {
+            result.append(generateDepthString(depth)).append("null\n");
+            return;
+        }
+
+        result.append(generateDepthString(depth)).append(node.e).append("\n");
+        generateBSTString(node.left, depth + 1, result);
+        generateBSTString(node.right, depth + 1, result);
+    }
+
+    private String generateDepthString(int depth) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < depth; i++)
+            stringBuilder.append("--");
+        return stringBuilder.toString();
+    }
 }
