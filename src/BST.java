@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Stack;
 
 public class BST<T extends Comparable<T>> {
@@ -132,6 +135,23 @@ public class BST<T extends Comparable<T>> {
         postOrder(node.left);
         postOrder(node.right);
         System.out.println(node.e);
+    }
+
+    public void levelOrder() {
+        if (root == null)
+            return;
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            Node current = queue.remove();
+            System.out.println(current.e);
+            if (current.left != null)
+                queue.add(current.left);
+            if (current.right != null)
+                queue.add(current.right);
+        }
     }
 
     @Override

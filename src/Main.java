@@ -22,6 +22,9 @@ public class Main {
         System.out.println("=== 后序遍历 ===");
         bst.postOrder();
 
+        System.out.println("=== 广度优先遍历 ===");
+        bst.levelOrder();
+
 //        String a = new String("I love Pan.");
 //        String b = a;
 //        String c = new String("I love Pan.");
