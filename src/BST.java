@@ -1,5 +1,6 @@
+import org.omg.CORBA.NO_IMPLEMENT;
+
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -152,6 +153,76 @@ public class BST<T extends Comparable<T>> {
             if (current.right != null)
                 queue.add(current.right);
         }
+    }
+
+    public T removeMin() {
+        T min = minimum();
+        root = removeMin(root);
+        return min;
+    }
+
+    private Node removeMin(Node node) {
+        if (node.left == null) {
+            Node right = node.right;
+            node.right = null;
+            size--;
+            return right;
+        } else {
+            node.left = removeMin(node.left);
+            return node;
+        }
+    }
+
+    public T removeMax() {
+        T max = maximum();
+        root = removeMax(root);
+        return max;
+    }
+
+    private Node removeMax(Node node) {
+        if (node.right == null) {
+            Node left = node.left;
+            node.left = null;
+            size--;
+            return left;
+        } else {
+            node.right = removeMax(node.right);
+            return node;
+        }
+    }
+
+    public T minimum() {
+        if (isEmpty())
+            throw new IllegalArgumentException("The Tree is empty.");
+
+        return minimum(root).e;
+    }
+
+    private Node minimum(Node node) {
+//        if (node == null)
+//            return null;
+
+        if (node.left == null)
+            return node;
+        else
+            return minimum(node.left);
+    }
+
+    public T maximum() {
+        if (isEmpty())
+            throw new IllegalArgumentException("The Tree is empty.");
+
+        return maximum(root).e;
+    }
+
+    private Node maximum(Node node) {
+//        if (node == null)
+//            return null;
+
+        if (node.right == null)
+            return node;
+        else
+            return maximum(node.right);
     }
 
     @Override
