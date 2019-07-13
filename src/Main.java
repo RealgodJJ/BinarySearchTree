@@ -48,7 +48,7 @@ public class Main {
         int size = newBst.getSize();
         System.out.println("Tree size: " + size);
 
-        for (int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
 //            System.out.println(newBst.removeMin());
             System.out.println(newBst.removeMax());
         }
