@@ -191,6 +191,51 @@ public class BST<T extends Comparable<T>> {
         }
     }
 
+    public void remove(T e) {
+        root = remove(root, e);
+    }
+
+    private Node remove(Node node, T e) {
+        if (node == null)
+            return null;
+
+        if (e.compareTo(node.e) < 0) {
+            node.left = remove(node.left, e);
+            return node;
+        } else if (e.compareTo(node.e) > 0) {
+            node.right = remove(node.right, e);
+            return node;
+        } else {    //e.compareTo(node.e) == 0
+            //左子树为空的情况
+            if (node.left == null) {
+                Node rightNode = node.right;
+                node.right = null;
+                size--;
+                return rightNode;
+            }
+
+            //右子树为空的情况
+            if (node.right == null) {
+                Node leftNode = node.left;
+                node.left = null;
+                size--;
+                return leftNode;
+            }
+
+            /*待删除节点左右都不为空的情况
+            （1）找到比待删除节点大的最小节点，即待删除节点右子树的最小节点
+            （2）用这个节点代替待删除节点的位置*/
+            Node successor = minimum(node.right);
+            successor.right = removeMin(node.right);
+            size++;
+            successor.left = node.left;
+
+            node.left = node.right = null;
+            size--;
+            return successor;
+        }
+    }
+
     public T minimum() {
         if (isEmpty())
             throw new IllegalArgumentException("The Tree is empty.");

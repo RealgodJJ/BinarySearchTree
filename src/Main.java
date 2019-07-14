@@ -13,8 +13,15 @@ public class Main {
         bst.add(21);
         bst.add(18);
         bst.add(29);
+        bst.add(25);
+        bst.add(30);
         bst.add(5);
         bst.add(7);
+        System.out.println(bst);
+
+        bst.remove(7);
+        System.out.println(bst);
+        bst.remove(21);
         System.out.println(bst);
 
         System.out.println("=== 前序遍历 ===");
