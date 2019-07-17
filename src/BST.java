@@ -1,5 +1,3 @@
-import org.omg.CORBA.NO_IMPLEMENT;
-
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
@@ -9,11 +7,13 @@ public class BST<T extends Comparable<T>> {
     private class Node {
         T e;
         Node left, right;
+        int size;   //该节点之下的所有节点总数
 
         private Node(T e) {
             this.e = e;
             left = null;
             right = null;
+            size = 1;
         }
     }
 
@@ -41,7 +41,7 @@ public class BST<T extends Comparable<T>> {
         root = add(root, e);
     }
 
-    private Node add(Node root, T e) {
+    private Node add(Node node, T e) {
         //先解决基本问题
 //        if (root.e.equals(e)) {
 //            return;
@@ -55,17 +55,20 @@ public class BST<T extends Comparable<T>> {
 //            return;
 //        }
 
-        if (root == null) {
+        if (node == null) {
             size++;
             return new Node(e);
         }
 
-        if (root.e.compareTo(e) > 0)
-            root.left = add(root.left, e);
-        else if (root.e.compareTo(e) < 0)
-            root.right = add(root.right, e);
+        if (node.e.compareTo(e) > 0) {
+            node.left = add(node.left, e);
+            node.size++;
+        } else if (node.e.compareTo(e) < 0) {
+            node.right = add(node.right, e);
+            node.size++;
+        }
 
-        return root;
+        return node;
     }
 
     public boolean contains(T e) {
@@ -166,9 +169,11 @@ public class BST<T extends Comparable<T>> {
             Node right = node.right;
             node.right = null;
             size--;
+//            node.size--;
             return right;
         } else {
             node.left = removeMin(node.left);
+            node.size--;
             return node;
         }
     }
@@ -184,26 +189,73 @@ public class BST<T extends Comparable<T>> {
             Node left = node.left;
             node.left = null;
             size--;
+//            node.size--;
             return left;
         } else {
             node.right = removeMax(node.right);
+            node.size--;
             return node;
         }
     }
 
     public void remove(T e) {
-        root = remove(root, e);
+//        root = remove_1(root, e);
+        root = remove_2(root, e);
     }
 
-    private Node remove(Node node, T e) {
+    private Node remove_2(Node node, T e) {
         if (node == null)
             return null;
 
         if (e.compareTo(node.e) < 0) {
-            node.left = remove(node.left, e);
+            node.left = remove_2(node.left, e);
+            node.size--;
             return node;
         } else if (e.compareTo(node.e) > 0) {
-            node.right = remove(node.right, e);
+            node.right = remove_2(node.right, e);
+            node.size--;
+            return node;
+        } else {
+            //左子树为空的情况
+            if (node.left == null) {
+                Node rightNode = node.right;
+                node.right = null;
+                size--;
+                node.size--;
+                return rightNode;
+            }
+
+            //右子树为空的情况
+            if (node.right == null) {
+                Node leftNode = node.left;
+                node.left = null;
+                size--;
+                node.size--;
+                return leftNode;
+            }
+
+            Node predecessor = maximum(node.left);
+            predecessor.left = removeMax(node.left);
+            size++;
+            predecessor.right = node.right;
+
+            node.left = node.right = null;
+            size--;
+
+            return predecessor;
+        }
+    }
+
+
+    private Node remove_1(Node node, T e) {
+        if (node == null)
+            return null;
+
+        if (e.compareTo(node.e) < 0) {
+            node.left = remove_1(node.left, e);
+            return node;
+        } else if (e.compareTo(node.e) > 0) {
+            node.right = remove_1(node.right, e);
             return node;
         } else {    //e.compareTo(node.e) == 0
             //左子树为空的情况
@@ -268,6 +320,85 @@ public class BST<T extends Comparable<T>> {
             return node;
         else
             return maximum(node.right);
+    }
+
+    public T ceil(T e) {
+        return ceil(root, e).e;
+    }
+
+    private Node ceil(Node node, T e) {
+        //寻找天花板数
+        if (node == null)
+            return null;
+
+        if (e.compareTo(node.e) == 0) {
+            return node;
+        } else if (e.compareTo(node.e) > 0) {
+            return ceil(node.right, e);
+        } else {
+            Node tempNode = ceil(node.left, e);
+            if (tempNode != null) return tempNode;
+            else return node;
+        }
+    }
+
+    public T floor(T e) {
+        return floor(root, e).e;
+    }
+
+    private Node floor(Node node, T e) {
+        if (node == null)
+            return null;
+
+        if (e.compareTo(node.e) == 0)
+            return node;
+        else if (e.compareTo(node.e) < 0)
+            return floor(node.left, e);
+        else {    //e.compareTo(node.e) > 0
+            Node tempNode = floor(node.right, e);
+            if (tempNode != null) return tempNode;
+            else return node;
+        }
+    }
+
+    public int rank(T e) {
+        return rank(root, e);
+    }
+
+    private int rank(Node node, T e) {
+        if (node == null)
+            return 0;
+
+        int leftSize = node.left == null ? 0 : node.left.size;
+
+        if (node.e.compareTo(e) == 0) {
+            return leftSize + 1;
+        } else if (node.e.compareTo(e) > 0) {
+            return rank(node.left, e);
+        } else {
+            return leftSize + 1 + rank(node.right, e);
+        }
+    }
+
+    public T select(int index) {
+        if (index >= size)
+            throw new IllegalArgumentException(
+                    String.format("select failed; rank out of bound; SIZE=%d, RANK=%d", size, index));
+
+        return select(root, index).e;
+    }
+
+    private Node select(Node node, int index) {
+        if (node == null)
+            return null;
+
+        int t = node.left == null ? 0 : node.left.size;
+        if (t == index)
+            return node;
+        else if (t > index)
+            return select(node.left, index);
+        else
+            return select(node.right, index - t - 1);
     }
 
     @Override
