@@ -81,7 +81,7 @@ public class BST<T extends Comparable<T>> {
 
         if (node.e.compareTo(e) == 0)
             return true;
-        else if (node.e.compareTo(e) < 0)
+        else if (node.e.compareTo(e) > 0)
             return contains(node.left, e);
         else
             return contains(node.right, e);
